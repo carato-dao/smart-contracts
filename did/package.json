@@ -1,0 +1,41 @@
+{
+    "name": "carato-digital-identity",
+    "version": "1.0.0",
+    "main": "index.js",
+    "scripts": {
+        "ganache-cli": "ganache-cli -d -p 7545 --gasLimit=10000000",
+        "extract-abi": "truffle-export-abi -d ./build/contracts/ -o ./abi.json -v",
+        "test": "truffle test",
+        "ganache:deploy": "sudo rm -rf build && sudo truffle deploy --reset && sudo npm run extract-abi",
+        "ganache:register": "node ganache/register.js",
+        "ganache:add": "node ganache/add.js",
+        "ganache:pub": "node ganache/pub.js",
+        "ganache:recover": "node ganache/recover.js",
+        "quadrans:deploy": "sudo rm -rf build && sudo truffle deploy --network quadrans --reset --verbose-rpc && sudo npm run extract-abi",
+        "quadrans:did": "node quadrans/did.js",
+        "ticino:deploy": "sudo rm -rf build && sudo truffle deploy --network ticino --reset --verbose-rpc && sudo npm run extract-abi",
+        "ticino:register": "node ticino/register.js",
+        "ticino:add": "node ticino/add.js",
+        "ticino:pub": "node ticino/pub.js",
+        "ticino:recover": "node ticino/recover.js"
+    },
+    "author": "turinglabs",
+    "license": "MIT",
+    "description": "",
+    "_id": "carato-erc20@1.0.0",
+    "dependencies": {
+        "@openzeppelin/contracts": "^4.1.0",
+        "@supercharge/strings": "^1.18.0",
+        "@truffle/hdwallet-provider": "^1.4.0",
+        "bip39": "^3.0.4",
+        "crypto": "^1.0.1",
+        "dotenv": "^8.2.0",
+        "ethereumjs-wallet": "^1.0.1",
+        "pify": "^5.0.0",
+        "web3": "^1.3.6"
+    },
+    "devDependencies": {
+        "solc": "^0.8.4",
+        "truffle-export-abi": "^1.0.1"
+    }
+}
