@@ -5,16 +5,15 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 import "@openzeppelin/contracts/security/Pausable.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 contract Carato20 is ERC20, ERC20Burnable, Pausable, Ownable {
-    using SafeMath for uint256;
-    constructor() ERC20("Carato", "CRT") {}
-
-    mapping(address => uint256) public locks;
+    uint8 token_decimals;
+    constructor(string memory _name, string memory _ticker, uint8 _decimals) ERC20(_name, _ticker) {
+        token_decimals = _decimals;
+    }
 
     function decimals() public view virtual override returns (uint8) {
-        return 2;
+        return token_decimals;
     }
 
     function pause() public onlyOwner {

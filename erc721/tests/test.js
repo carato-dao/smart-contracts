@@ -4,7 +4,7 @@ require('dotenv').config()
 const argv = require('minimist')(process.argv.slice(2));
 const fs = require('fs')
 const contract_name = argv._[0]
-const NFT_CONTRACT_ABI = require('../abis/' + contract_name.replace('polygon/', '').replace('mumbai/', '').replace('ganache/', '') + '.json')
+const NFT_CONTRACT_ABI = require('./abi.json')
 
 async function main() {
     try {

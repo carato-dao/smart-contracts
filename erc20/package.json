@@ -1,36 +1,34 @@
 {
-    "name": "carato-erc20",
-    "version": "1.0.0",
+    "name": "umi-erc-20",
+    "version": "1.0.6",
+    "description": "UMi ERC-721 Base Contract",
     "main": "index.js",
     "scripts": {
-        "ganache-cli": "ganache-cli -d -p 7545 --gasLimit=10000000",
         "extract-abi": "truffle-export-abi -d ./build/contracts/ -o ./abi.json -v",
         "test": "truffle test",
-        "ganache:deploy": "sudo rm -rf build && sudo truffle deploy --reset && sudo npm run extract-abi",
-        "ganache:details": "node ganache/details.js",
-        "ganache:mint": "node ganache/mint.js",
-        "ganache:lock": "node ganache/lock.js",
-        "ganache:transfer": "node ganache/transfer.js",
-        "ganache:burn": "node ganache/burn.js",
-        "quadrans:deploy": "sudo rm -rf build && sudo truffle deploy --network quadrans --reset --verbose-rpc && sudo npm run extract-abi",
-        "quadrans:details": "node quadrans/details.js",
-        "quadrans:mint": "node quadrans/mint.js",
-        "quadrans:transfer": "node quadrans/transfer.js",
-        "ticino:deploy": "sudo rm -rf build && sudo truffle deploy --network ticino --reset --verbose-rpc && sudo npm run extract-abi",
-        "ticino:details": "node ticino/details.js",
-        "ticino:mint": "node ticino/mint.js"
+        "test:test": "node tests/test.js",
+        "test:mint": "node tests/mint.js",
+        "test:burn": "node tests/burn.js",
+        "test:transfer": "node tests/transfer.js",
+        "test:disable_proxy": "node tests/disable_proxy.js",
+        "test:enable_proxy": "node tests/enable_proxy.js",
+        "deploy:debug": "node deploy.js --debug=true",
+        "deploy": "node deploy.js"
     },
-    "author": "turinglabs",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/Nft-Studio/base-collectible-contract"
+    },
+    "author": "dev@nftstud.io",
     "license": "MIT",
-    "description": "",
-    "_id": "carato-erc20@1.0.0",
     "dependencies": {
         "@openzeppelin/contracts": "^4.1.0",
         "@truffle/hdwallet-provider": "^1.4.0",
-        "dotenv": "^8.2.0",
+        "dotenv": "^10.0.0",
         "web3": "^1.3.6"
     },
     "devDependencies": {
+        "eslint": "^6.8.0",
         "solc": "^0.8.4",
         "truffle-export-abi": "^1.0.1"
     }

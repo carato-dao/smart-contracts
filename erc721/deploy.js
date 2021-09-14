@@ -38,7 +38,7 @@ async function deploy() {
             let out = child_process.execSync('sudo PROVIDER="' + configs.provider + '" MNEMONIC="' + minter_mnemonic + '" BASEURI="' + configs.contract.baseURI + '" DESCRIPTION="' + configs.contract.contractIPFS + '" TICKER="' + configs.contract.ticker + '" NAME="' + configs.contract.name + '" PROXY="' + configs.proxy_address + '" PROXY_ENABLED=' + configs.proxy_enabled + ' BURNING_ENABLED=' + configs.burning_enabled + ' OWNER="' + configs.owner_address + '" truffle deploy --network ' + configs.network + ' --reset', output)
 
             // Extracting address
-                if(out !== null){
+            if (out !== null) {
                 out = out.toString()
                 let head = out.split('CONTRACT ADDRESS IS*||*')
                 let foot = head[1].split('*||*')

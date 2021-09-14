@@ -33,7 +33,6 @@ contract Carato721 is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
         bool _burningEnabled,
         string memory _base_uri
     ) ERC721(_name, _ticker) {
-        openseaProxyAddress = _openseaProxyAddress;
         umiProxyAddress = _umiProxyAddress;
         contract_ipfs_json = _contract_ipfs;
         proxyMintingEnabled = _proxyMintingEnabled;
@@ -215,10 +214,7 @@ contract Carato721 is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
             return false;
         }
         // Approving for UMi and Opensea address
-        if (
-            _operator == address(openseaProxyAddress) ||
-            _operator == address(umiProxyAddress)
-        ) {
+        if (_operator == address(umiProxyAddress)) {
             return true;
         }
 

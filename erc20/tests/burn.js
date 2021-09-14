@@ -1,26 +1,34 @@
 const HDWalletProvider = require("@truffle/hdwallet-provider");
 const web3 = require("web3");
 require('dotenv').config()
-const NFT_CONTRACT_ABI = require('../abi.json')
 const argv = require('minimist')(process.argv.slice(2));
 const fs = require('fs')
+const contract_name = argv._[0]
+const ABI = require('../abi.json')
 
 async function main() {
     try {
         const configs = JSON.parse(fs.readFileSync('./deployed/' + argv._ + '.json').toString())
         const provider = new HDWalletProvider(
-            configs.umi.mnemonic,
-            configs.provider
+            configs.owner_mnemonic,
+            "http://localhost:7545"
         );
         const web3Instance = new web3(provider);
-        const message = "SomeDataToSign"
-        console.log("Signing `" + message + "` with address " + configs.umi.address)
-        const signed = await web3Instance.eth.personal.sign(message, configs.umi.address)
-        console.log("Signed message: " + signed)
-        const verified = await web3Instance.eth.personal.ecRecover(message, signed)
-        console.log("Verified address from signature: " + verified)
 
-        process.exit();
+        const contract = new web3Instance.eth.Contract(
+            ABI,
+            configs.contract_address, { gasLimit: "5000000" }
+        );
+
+        try {
+            console.log('Burn tokens...')
+            const burn = await contract.methods.burn(50000).send({ from: configs.owner_address })
+            console.log(burn)
+            process.exit();
+        } catch (e) {
+            console.log(e.message)
+            process.exit();
+        }
     } catch (e) {
         console.log(e.message)
         process.exit();
