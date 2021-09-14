@@ -45,8 +45,12 @@ contract Carato721 is ERC721, ERC721URIStorage, ERC721Burnable, Ownable {
         return baseURI;
     }
 
-    function _burn(uint256 _tokenId) public override(ERC721, ERC721URIStorage) {
-        require(burningEnabled, "Carato721: Burning is disabled");
+    function _burn(uint256 _tokenId) internal override(ERC721, ERC721URIStorage) {
+        require(burningEnabled, "UMi721: Burning is disabled");
+        super._burn(_tokenId);
+    }
+
+    function burnToken(uint256 _tokenId) public {
         super._burn(_tokenId);
     }
 
