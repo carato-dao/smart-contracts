@@ -9,7 +9,7 @@ const argv = require('minimist')(process.argv.slice(2));
 const fs = require('fs')
 
 async function main() {
-    const configs = JSON.parse(fs.readFileSync('./deployed/' + argv._ + '.json').toString())
+    const configs = JSON.parse(fs.readFileSync('./configs/' + argv._ + '.json').toString())
     if (configs.owner_mnemonic !== undefined) {
         const provider = new HDWalletProvider(
             configs.owner_mnemonic,
@@ -19,25 +19,20 @@ async function main() {
 
         const nftContract = new web3Instance.eth.Contract(
             NFT_CONTRACT_ABI,
-            configs.contract_address, { gasLimit: "5000000" }
+            configs.contract_address, { gasLimit: "500000", gasPrice: "100000000000" }
         );
-
-        const name = await nftContract.methods.name().call();
-        const symbol = await nftContract.methods.symbol().call();
-        const owner = await nftContract.methods.owner().call();
-        console.log('|* NFT DETAILS *|')
-        console.log('>', name, symbol, '<')
-        console.log('Owner is', owner)
 
         try {
             console.log('Trying minting NFT...')
             const result = await nftContract.methods
-                .mintNFT('0x000000000000000000000000000009')
-                .send({ from: configs.owner_address });
+                .setURI("https://ipfs.io/ipfs/anotherfolder/{id}.json")
+                .send({ from: configs.owner_address, gasPrice: "100000000000" });
             console.log("NFT minted! Transaction: " + result.transactionHash);
             console.log(result)
+            process.exit();
         } catch (e) {
             console.log(e)
+            process.exit();
         }
     } else {
         console.log('Please provide `owner_mnemonic` first.')

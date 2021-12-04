@@ -7,18 +7,22 @@ const fs = require('fs')
 
 async function main() {
     try {
-        const configs = JSON.parse(fs.readFileSync('./deployed/' + argv._ + '.json').toString())
+        const configs = JSON.parse(fs.readFileSync('./configs/' + argv._ + '.json').toString())
         const provider = new HDWalletProvider(
-            configs.umi.mnemonic,
+            configs.owner_mnemonic,
             configs.provider
         );
         const web3Instance = new web3(provider);
-        const message = "SomeDataToSign"
-        console.log("Signing `" + message + "` with address " + configs.umi.address)
-        const signed = await web3Instance.eth.personal.sign(message, configs.umi.address)
-        console.log("Signed message: " + signed)
-        const verified = await web3Instance.eth.personal.ecRecover(message, signed)
-        console.log("Verified address from signature: " + verified)
+        const nftContract = new web3Instance.eth.Contract(
+            NFT_CONTRACT_ABI,
+            configs.contract_address
+        );
+        let minters = configs.minters
+        for (let k in minters) {
+            await nftContract.methods.addMinter(minters[k]).send({ from: configs.owner_address, gasPrice: "100000000000" })
+            const proxy = await nftContract.methods.isMinter(minters[k]).call();
+            console.log(minters[k] + ' enabled to mint:', proxy)
+        }
 
         process.exit();
     } catch (e) {

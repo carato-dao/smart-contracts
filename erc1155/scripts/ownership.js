@@ -7,9 +7,9 @@ const fs = require('fs')
 
 async function main() {
     try {
-        const configs = JSON.parse(fs.readFileSync('./deployed/' + argv._ + '.json').toString())
+        const configs = JSON.parse(fs.readFileSync('./configs/' + argv._ + '.json').toString())
         const provider = new HDWalletProvider(
-            configs.umi.mnemonic,
+            configs.owner_mnemonic,
             configs.provider
         );
         const web3Instance = new web3(provider);
@@ -17,12 +17,10 @@ async function main() {
             NFT_CONTRACT_ABI,
             configs.contract_address
         );
-        console.log('Disabling proxy in contract: ' + argv._)
-        console.log('--')
-        console.log('CONTRACT ADDRESS IS:', configs.contract_address)
-        await nftContract.methods.disableProxyMinting().send({ from: configs.umi.address })
-        const proxy = await nftContract.methods.proxyMintingEnabled().call();
-        console.log('Proxy enabled:', proxy)
+        console.log('Transferring ownership to ' + configs.real_owner)
+        await nftContract.methods.transferOwnership(configs.real_owner).send({ from: configs.owner_address, gasPrice: "100000000000" })
+        const owner = await nftContract.methods.owner().call();
+        console.log('Owner is ' + owner)
 
         process.exit();
     } catch (e) {

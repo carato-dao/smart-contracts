@@ -3,6 +3,12 @@ require('dotenv').config()
 
 module.exports = {
     contracts_directory: "./contracts/",
+    plugins: [
+        'truffle-plugin-verify'
+    ],
+    api_keys: {
+        polygonscan: "CI1U9JUBM1TURUJ7E63Z6KPVJ5VZGZVPI4"
+    },
     networks: {
         ganache: {
             host: "localhost",
@@ -12,7 +18,7 @@ module.exports = {
             network_id: "*", // Match any network id
         },
         tbsc: {
-            provider: function() {
+            provider: function () {
                 return new HDWalletProvider(process.env.MNEMONIC, process.env.PROVIDER);
             },
             confirmations: 2,
@@ -21,7 +27,7 @@ module.exports = {
             networkCheckTimeout: 10000000
         },
         bsc: {
-            provider: function() {
+            provider: function () {
                 return new HDWalletProvider(process.env.MNEMONIC, process.env.PROVIDER);
             },
             confirmations: 2,
@@ -42,7 +48,7 @@ module.exports = {
             network_id: 137,
             confirmations: 2,
             timeoutBlocks: 200,
-            gasPrice: "20000000000",
+            gasPrice: "100000000000",
             skipDryRun: true
         }
     },
@@ -55,7 +61,7 @@ module.exports = {
     },
     compilers: {
         solc: {
-            version: "^0.8.6"
+            version: "0.8.6"
         },
     },
 };
