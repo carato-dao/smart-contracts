@@ -6,5 +6,5 @@ node_modules/
 .nvmrc
 eth/deploy.sh
 yarn-error.log
-deployed/
+configs/
 .DS_Store

@@ -8,7 +8,7 @@ const ABI = require('../abi.json')
 
 async function main() {
     try {
-        const configs = JSON.parse(fs.readFileSync('./deployed/' + argv._ + '.json').toString())
+        const configs = JSON.parse(fs.readFileSync('./configs/' + argv._ + '.json').toString())
         const provider = new HDWalletProvider(
             configs.owner_mnemonic,
             "http://localhost:7545"
