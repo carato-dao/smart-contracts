@@ -27,7 +27,7 @@ async function main() {
         // CHANGE THIS PARAM TO SEND ANOTHER TYPE OF AIRDROP
         const nft_type = 1
         const k = 0
-        const receiver = '0xbB6Ac9074A71B4653f698B30bCcDf1C95D86bd96'
+        const receiver = configs.minters[1]
         const check = await contract.methods.balanceOf(receiver, nft_type).call()
         console.log('NFT balance is: ' + check)
         if (parseInt(check) === 0) {
@@ -37,6 +37,8 @@ async function main() {
                     .safeTransferFrom(configs.minters[k], receiver, nft_type, 1, "0x0")
                     .send({ from: configs.minters[k], nonce: nonce, gasPrice: "200000000000", gas: "1000000" })
                 console.log('Transfer successful!', transfer.transactionHash)
+                const check = await contract.methods.balanceOf(receiver, nft_type).call()
+                console.log('NFT balance after sending is: ' + check)
             } catch (e) {
                 console.log('Transfer errored..', e.message)
             }

@@ -10,10 +10,11 @@ contract CaratoEvents is ERC1155, Ownable {
     string metadata_uri;
     mapping(address => bool) private _minters;
     mapping(uint256 => uint256) public _eventValues;
-    mapping(uint256 => uint256) public _mintingTimestamps;
+    mapping(uint256 => uint256) public _claimDeadline;
     uint256 public _maxValue = 5;
     bool public _mintingAuthored = false;
     address public _authorizationAddress;
+    uint256 _deadlineDays = 7;
 
     constructor(address _proxyRegistryAddress) ERC1155("https://api.carato.org/nfts/{id}.json") {
         proxyRegistryAddress = _proxyRegistryAddress;
@@ -27,6 +28,10 @@ contract CaratoEvents is ERC1155, Ownable {
 
     function setAuthored(bool state) public onlyOwner {
         _mintingAuthored = state;
+    }
+
+    function setDeadlineDays(uint256 newday) public onlyOwner {
+        _deadlineDays = newday;
     }
 
     function setAuthorizationAddress(address newaddress) public onlyOwner {
@@ -50,6 +55,7 @@ contract CaratoEvents is ERC1155, Ownable {
         require(value > 0, "CaratoEvents: Value must be at least 1");
         require(value <= _maxValue, "CaratoEvents: Value too high");
         _eventValues[id] = value;
+        _claimDeadline[id] = block.timestamp + (_deadlineDays * 2 days);
         _mint(account, id, amount, data);
     }
 
@@ -79,7 +85,13 @@ contract CaratoEvents is ERC1155, Ownable {
         bytes memory data
     ) internal override {
         require(isMinter(msg.sender), "CaratoEvents: Only minters can transfer tokens");
-        return ERC1155._safeTransferFrom(from, to, id, amount, data);
+        require(from == msg.sender, "CaratoEvents: Only owner can move tokens");
+        // Burn tokens if try to transfer after deadline
+        if(block.timestamp >= _claimDeadline[id]) {
+            return ERC1155._burn(from, id, amount);
+        } else {
+            return ERC1155._safeTransferFrom(from, to, id, amount, data);
+        }
     }
 
     function _safeBatchTransferFrom(
@@ -88,7 +100,7 @@ contract CaratoEvents is ERC1155, Ownable {
         uint256[] memory ids,
         uint256[] memory amounts,
         bytes memory data
-    ) internal override {
+    ) internal override pure {
         require(1 < 0, "CaratoEvents: Only minters can transfer tokens");
     }
 
