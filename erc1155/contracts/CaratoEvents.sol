@@ -9,6 +9,11 @@ contract CaratoEvents is ERC1155, Ownable {
     address proxyRegistryAddress;
     string metadata_uri;
     mapping(address => bool) private _minters;
+    mapping(uint256 => uint256) public _eventValues;
+    mapping(uint256 => uint256) public _mintingTimestamps;
+    uint256 public _maxValue = 5;
+    bool public _mintingAuthored = false;
+    address public _authorizationAddress;
 
     constructor(address _proxyRegistryAddress) ERC1155("https://api.carato.org/nfts/{id}.json") {
         proxyRegistryAddress = _proxyRegistryAddress;
@@ -20,14 +25,31 @@ contract CaratoEvents is ERC1155, Ownable {
         _setURI(newuri);
     }
 
+    function setAuthored(bool state) public onlyOwner {
+        _mintingAuthored = state;
+    }
+
+    function setAuthorizationAddress(address newaddress) public onlyOwner {
+        _authorizationAddress = newaddress;
+    }
+
+    function setMaxValue(uint256 newvalue) public onlyOwner {
+        _maxValue = newvalue;
+    }
+
     function contractURI() public view returns (string memory){
         return metadata_uri;
     }
 
-    function mint(address account, uint256 id, uint256 amount, bytes memory data)
-        public
-    {
-        require(isMinter(msg.sender), "CaratoEvents: Only minters can mint");
+    function mint(address account, uint256 id, uint256 amount, bytes memory data, uint256 value) public {
+        if(_mintingAuthored) {
+            require(msg.sender == _authorizationAddress, "CaratoEvents: Minting is authored");
+        } else {
+            require(isMinter(msg.sender), "CaratoEvents: Only minters can mint");
+        }
+        require(value > 0, "CaratoEvents: Value must be at least 1");
+        require(value <= _maxValue, "CaratoEvents: Value too high");
+        _eventValues[id] = value;
         _mint(account, id, amount, data);
     }
 
@@ -47,12 +69,36 @@ contract CaratoEvents is ERC1155, Ownable {
     }
 
     /**
+   * Overriding to disallow the transfer
+   */
+     function _safeTransferFrom(
+        address from,
+        address to,
+        uint256 id,
+        uint256 amount,
+        bytes memory data
+    ) internal override {
+        require(isMinter(msg.sender), "CaratoEvents: Only minters can transfer tokens");
+        return ERC1155._safeTransferFrom(from, to, id, amount, data);
+    }
+
+    function _safeBatchTransferFrom(
+        address from,
+        address to,
+        uint256[] memory ids,
+        uint256[] memory amounts,
+        bytes memory data
+    ) internal override {
+        require(1 < 0, "CaratoEvents: Only minters can transfer tokens");
+    }
+
+    /**
    * Override isApprovedForAll to auto-approve OS's proxy contract
    */
     function isApprovedForAll(
         address _owner,
         address _operator
-    ) public override view returns (bool isOperator) {
+    ) public override virtual view returns (bool isOperator) {
        if (_operator == address(proxyRegistryAddress)) {
             return true;
         }
