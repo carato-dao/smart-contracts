@@ -26,6 +26,10 @@ async function main() {
         const amount = 100
         const k = 0
         const value = 3
+        const eventDate = "06-12-2021".split("-");
+        const eventTime = "10:00".split(":");
+        const start_timestamp = parseInt(new Date(eventDate[2], eventDate[1] - 1, eventDate[0], eventTime[0], eventTime[1]).getTime() / 1000)
+        console.log('Setting timestamp to ' + start_timestamp)
         const nonce = await web3Instance.eth.getTransactionCount(configs.minters[k])
         console.log('Trying minting NFT ' + nft_type + ' with ' + configs.minters[k] + ' with nonce ' + nonce + '...')
         try {
@@ -35,7 +39,7 @@ async function main() {
                 const toMint = amount - parseInt(check)
                 console.log('Need to mint ' + toMint + ' NFTs')
                 const result = await nftContract.methods
-                    .mint(configs.minters[k], nft_type, toMint, "0x0", value)
+                    .mint(configs.minters[k], nft_type, toMint, "0x0", value, start_timestamp)
                     .send({ from: configs.minters[k], nonce: nonce, gasPrice: "100000000000" });
                 console.log("NFT minted! Transaction: " + result.transactionHash);
             } else {

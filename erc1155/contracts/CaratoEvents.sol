@@ -11,9 +11,10 @@ contract CaratoEvents is ERC1155, Ownable {
     mapping(address => bool) private _minters;
     mapping(uint256 => uint256) public _eventValues;
     mapping(uint256 => uint256) public _claimDeadline;
+    mapping(uint256 => uint256) public _startTimestamp;
     uint256 public _maxValue = 5;
     bool public _mintingAuthored = false;
-    address public _authorizationAddress;
+    address public _daoAddress;
     uint256 _deadlineDays = 7;
 
     constructor(address _proxyRegistryAddress) ERC1155("https://api.carato.org/nfts/{id}.json") {
@@ -34,8 +35,8 @@ contract CaratoEvents is ERC1155, Ownable {
         _deadlineDays = newday;
     }
 
-    function setAuthorizationAddress(address newaddress) public onlyOwner {
-        _authorizationAddress = newaddress;
+    function setDaoAddress(address newaddress) public onlyOwner {
+        _daoAddress = newaddress;
     }
 
     function setMaxValue(uint256 newvalue) public onlyOwner {
@@ -46,16 +47,18 @@ contract CaratoEvents is ERC1155, Ownable {
         return metadata_uri;
     }
 
-    function mint(address account, uint256 id, uint256 amount, bytes memory data, uint256 value) public {
+    function mint(address account, uint256 id, uint256 amount, bytes memory data, uint256 value, uint256 start_timestamp) public {
         if(_mintingAuthored) {
-            require(msg.sender == _authorizationAddress, "CaratoEvents: Minting is authored");
+            require(msg.sender == _daoAddress, "CaratoEvents: Minting is authored");
         } else {
             require(isMinter(msg.sender), "CaratoEvents: Only minters can mint");
         }
+        require(block.timestamp < start_timestamp, "CaratoEvents: Can't mint token in the past");
         require(value > 0, "CaratoEvents: Value must be at least 1");
         require(value <= _maxValue, "CaratoEvents: Value too high");
         _eventValues[id] = value;
-        _claimDeadline[id] = block.timestamp + (_deadlineDays * 2 days);
+        _startTimestamp[id] = start_timestamp;
+        _claimDeadline[id] = start_timestamp + (_deadlineDays * 2 days);
         _mint(account, id, amount, data);
     }
 
@@ -86,10 +89,14 @@ contract CaratoEvents is ERC1155, Ownable {
     ) internal override {
         require(isMinter(msg.sender), "CaratoEvents: Only minters can transfer tokens");
         require(from == msg.sender, "CaratoEvents: Only owner can move tokens");
-        // Burn tokens if try to transfer after deadline
+        // Require event started
+        require(block.timestamp >= _startTimestamp[id], "CaratoEvents: Can't move before beginning");
+        // Burn all tokens if try to transfer after deadline
         if(block.timestamp >= _claimDeadline[id]) {
-            return ERC1155._burn(from, id, amount);
+            uint256 balance = ERC1155.balanceOf(from, id);
+            return ERC1155._burn(from, id, balance);
         } else {
+            require(ERC1155.balanceOf(to, id) == 0, "CaratoEvents: Can't send more than one NFT to same account");
             return ERC1155._safeTransferFrom(from, to, id, amount, data);
         }
     }
@@ -101,7 +108,7 @@ contract CaratoEvents is ERC1155, Ownable {
         uint256[] memory amounts,
         bytes memory data
     ) internal override pure {
-        require(1 < 0, "CaratoEvents: Only minters can transfer tokens");
+        require(1 < 0, "CaratoEvents: Batch transfers are disabled");
     }
 
     /**
