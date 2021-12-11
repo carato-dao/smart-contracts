@@ -6,18 +6,11 @@
     "scripts": {
         "extract-abi": "truffle-export-abi -d ./build/contracts/ -o ./abi.json -v",
         "test": "truffle test",
-        "script:details": "node scripts/details.js",
-        "script:set": "node scripts/setUri.js",
-        "script:addminters": "node scripts/add_minters.js",
-        "script:mint": "node scripts/mint.js",
-        "script:generate": "node scripts/generate.js",
-        "script:airdrop": "node scripts/airdrop.js",
-        "script:ownership": "node scripts/ownership.js",
-        "script:refresh": "node scripts/refresh_bot.js",
-        "deploy:debug": "node deploy.js --debug=true",
+        "test:fix:addresses": "node tests/fix_addresses.js",
+        "test:claim": "node tests/claim.js",
         "deploy": "node deploy.js",
-        "verify:mumbai": "truffle run verify CaratoEvents --network mumbai",
-        "verify:polygon": "truffle run verify CaratoEvents --network polygon"
+        "verify:mumbai": "truffle run verify CaratoVesting --network mumbai",
+        "verify:polygon": "truffle run verify CaratoVesting --network polygon"
     },
     "author": "turinglabsorg",
     "license": "MIT",

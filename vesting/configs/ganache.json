@@ -1,7 +1,10 @@
 {
     "network": "ganache",
-    "contract_address": "0xcC018E0d1F938A58FAEdA454e4320dDED1830Bd5",
-    "owner_mnemonic": "GANACHE_MNEMONIC",
-    "owner_address": "GANACHE_ADDRESS",
-    "provider": "http://localhost:7545"
+    "contract_address": "0x5B593349aBC5ED40c912576c70C6bf8286b7DA72",
+    "owner_address": "0x692b340915Eb661CB3AD878Db4ca44B57Ea8Dc2a",
+    "owner_mnemonic": "level venue crew odor attack uncover flush steak club lumber pupil nerve",
+    "provider": "http://localhost:7545",
+    "erc_20": "0x594cE09D911Cd2f04FbD8b6f71329baC62288a99",
+    "erc_1155": "0x5d8df72f01f85e512BE3301301EFB7229568CA78",
+    "receiver_user": "0x7eDecB2FedD2378f18e42B302E22FA40FE0ddCD6"
 }

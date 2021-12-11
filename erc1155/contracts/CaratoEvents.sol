@@ -47,7 +47,15 @@ contract CaratoEvents is ERC1155, Ownable {
         return metadata_uri;
     }
 
-    function mint(address account, uint256 id, uint256 amount, bytes memory data, uint256 value, uint256 start_timestamp) public {
+    function mint(
+        address account,
+        uint256 id,
+        uint256 amount,
+        bytes memory data,
+        uint256 value,
+        uint256 start_timestamp,
+        uint256 end_timestamp
+    ) public {
         if(_mintingAuthored) {
             require(msg.sender == _daoAddress, "CaratoEvents: Minting is authored");
         } else {
@@ -58,8 +66,18 @@ contract CaratoEvents is ERC1155, Ownable {
         require(value <= _maxValue, "CaratoEvents: Value too high");
         _eventValues[id] = value;
         _startTimestamp[id] = start_timestamp;
-        _claimDeadline[id] = start_timestamp + (_deadlineDays * 2 days);
+        _claimDeadline[id] = end_timestamp;
         _mint(account, id, amount, data);
+    }
+
+    function returnEvent(uint256 id) public view returns (uint256, uint256, uint256) {
+        require(_eventValues[id] > 0, "CaratoEvents: Event doesn't exists");
+        return (_eventValues[id], _startTimestamp[id], _claimDeadline[id]);
+    }
+
+    function returnEventValue(uint256 id) public view returns (uint256) {
+        require(_eventValues[id] > 0, "CaratoEvents: Event doesn't exists");
+        return _eventValues[id];
     }
 
     /*

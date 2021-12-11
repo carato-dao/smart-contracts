@@ -13,7 +13,7 @@
         "test:generate": "node tests/generate.js",
         "test:airdrop": "node tests/airdrop.js",
         "test:transfer": "node tests/transfer.js",
-        "test:ownership": "node tests/ownership.js",
+        "test:transfer:ownership": "node tests/ownership.js",
         "test:refresh": "node tests/refresh_bot.js",
         "deploy:debug": "node deploy.js --debug=true",
         "deploy": "node deploy.js",
