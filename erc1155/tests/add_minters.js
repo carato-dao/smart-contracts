@@ -19,9 +19,14 @@ async function main() {
         );
         let minters = configs.minters
         for (let k in minters) {
-            await nftContract.methods.addMinter(minters[k]).send({ from: configs.owner_address, gasPrice: "100000000000" })
-            const proxy = await nftContract.methods.isMinter(minters[k]).call();
-            console.log(minters[k] + ' enabled to mint:', proxy)
+            const before = await nftContract.methods.isMinter(minters[k]).call();
+            if (!before) {
+                await nftContract.methods.addMinter(minters[k]).send({ from: configs.owner_address, gasPrice: "100000000000" })
+                const proxy = await nftContract.methods.isMinter(minters[k]).call();
+                console.log(minters[k] + ' enabled to mint:', proxy)
+            } else {
+                console.log(minters[k] + ' enabled yet.', proxy)
+            }
         }
 
         process.exit();

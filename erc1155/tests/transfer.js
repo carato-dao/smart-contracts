@@ -27,7 +27,7 @@ async function main() {
         // CHANGE THIS PARAM TO SEND ANOTHER TYPE OF AIRDROP
         const nft_type = 1
         const k = 0
-        const receiver = configs.minters[1]
+        const receiver = "0xE6c30AD5AeE7AD22e9F39D51d67667587cdD05A1"
         const check = await contract.methods.balanceOf(receiver, nft_type).call()
         console.log('NFT balance is: ' + check)
         if (parseInt(check) === 0) {

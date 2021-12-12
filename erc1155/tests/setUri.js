@@ -23,11 +23,11 @@ async function main() {
         );
 
         try {
-            console.log('Trying minting NFT...')
+            console.log('Trying setting new URI...')
             const result = await nftContract.methods
-                .setURI("https://ipfs.io/ipfs/anotherfolder/{id}.json")
+                .setURI("https://raw.githubusercontent.com/carato-blockchain/smart-contracts/master/erc1155/nfts/{id}.json")
                 .send({ from: configs.owner_address, gasPrice: "100000000000" });
-            console.log("NFT minted! Transaction: " + result.transactionHash);
+            console.log("Done! Transaction: " + result.transactionHash);
             console.log(result)
             process.exit();
         } catch (e) {

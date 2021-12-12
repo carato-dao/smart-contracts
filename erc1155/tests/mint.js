@@ -23,27 +23,29 @@ async function main() {
         );
         // CUSTOMIZE THE AMOUNT MINTED AND TOKEN ID
         const nft_type = 1
-        const amount = 200
+        const amount = 100
         const k = 0
         const value = 3
-        const eventDate = "11-12-2021".split("-");
-        const eventTime = "09:18".split(":");
+        const eventDate = "12-12-2021".split("-");
+        const eventTime = "09:30".split(":");
         const start_timestamp = parseInt(new Date(eventDate[2], eventDate[1] - 1, eventDate[0], eventTime[0], eventTime[1]).getTime() / 1000)
         const claimDeadline = "31-12-2021".split("-");
         const claimTime = "10:00".split(":");
         const end_timestamp = parseInt(new Date(claimDeadline[2], claimDeadline[1] - 1, claimDeadline[0], claimTime[0], claimTime[1]).getTime() / 1000)
         console.log('Setting timestamp to ' + start_timestamp)
-        const nonce = await web3Instance.eth.getTransactionCount(configs.minters[k])
-        console.log('Trying minting NFT ' + nft_type + ' with ' + configs.minters[k] + ' with nonce ' + nonce + '...')
         try {
             const check = await nftContract.methods.balanceOf(configs.minters[k], nft_type).call()
             console.log('Balance of type ' + nft_type + ' is ' + check)
             if (parseInt(check) < amount) {
                 const toMint = amount - parseInt(check)
-                console.log('Need to mint ' + toMint + ' NFTs')
+                console.log('Need to mint ' + toMint + ' NFTs, minting..')
+                let nonce = await web3Instance.eth.getTransactionCount(configs.minters[k])
+                console.log('Trying minting NFT ' + nft_type + ' with ' + configs.minters[k] + ' with nonce ' + nonce + '...')
                 const result = await nftContract.methods
-                    .mint(configs.minters[k], nft_type, toMint, "0x0", value, start_timestamp, end_timestamp, )
-                    .send({ from: configs.minters[k], nonce: nonce, gasPrice: "100000000000" });
+                    .mint(configs.minters[k], nft_type, toMint, "0x0", value, start_timestamp, end_timestamp)
+                    .send({ from: configs.minters[k], nonce: nonce, gasPrice: "100000000000" }).on('transactionHash', pending => {
+                        console.log('Pending TX is: ' + pending)
+                    })
                 console.log("NFT minted! Transaction: " + result.transactionHash);
             } else {
                 console.log('NFT ' + nft_type + ' minted yet')
