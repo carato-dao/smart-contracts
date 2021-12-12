@@ -1,7 +1,7 @@
 {
-    "name": "carato-erc1155",
+    "name": "carato-vesting",
     "version": "1.0.5",
-    "description": "Carato ERC-1155",
+    "description": "Carato Vesting Contract",
     "main": "index.js",
     "scripts": {
         "extract-abi": "truffle-export-abi -d ./build/contracts/ -o ./abi.json -v",
@@ -9,8 +9,7 @@
         "test:fix:addresses": "node tests/fix_addresses.js",
         "test:claim": "node tests/claim.js",
         "deploy": "node deploy.js",
-        "verify:mumbai": "truffle run verify CaratoVesting --network mumbai",
-        "verify:polygon": "truffle run verify CaratoVesting --network polygon"
+        "verify": "node verify.js"
     },
     "author": "turinglabsorg",
     "license": "MIT",

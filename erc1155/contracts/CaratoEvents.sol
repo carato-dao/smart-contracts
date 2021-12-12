@@ -43,10 +43,6 @@ contract CaratoEvents is ERC1155, Ownable {
         _maxValue = newvalue;
     }
 
-    function contractURI() public view returns (string memory){
-        return metadata_uri;
-    }
-
     function mint(
         address account,
         uint256 id,

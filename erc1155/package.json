@@ -17,8 +17,7 @@
         "test:refresh": "node tests/refresh_bot.js",
         "deploy:debug": "node deploy.js --debug=true",
         "deploy": "node deploy.js",
-        "verify:mumbai": "truffle run verify CaratoEvents --network mumbai",
-        "verify:polygon": "truffle run verify CaratoEvents --network polygon"
+        "verify": "node verify.js"
     },
     "author": "turinglabsorg",
     "license": "MIT",
