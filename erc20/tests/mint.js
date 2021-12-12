@@ -11,7 +11,7 @@ async function main() {
         const configs = JSON.parse(fs.readFileSync('./configs/' + argv._ + '.json').toString())
         const provider = new HDWalletProvider(
             configs.owner_mnemonic,
-            "http://localhost:7545"
+            configs.provider
         );
         const web3Instance = new web3(provider);
 
@@ -21,9 +21,15 @@ async function main() {
         );
 
         try {
-            console.log('Minting new tokens...')
-            const mint = await contract.methods.mint(configs.owner_address, 5000).send({ from: configs.owner_address })
-            console.log(mint)
+            console.log('Checking if enabled')
+            const enabled = await contract.methods.isMinter(configs.owner_address).call()
+            if (enabled) {
+                console.log('Minting new tokens...')
+                const mint = await contract.methods.mint(configs.owner_address, 5000).send({ from: configs.owner_address })
+                console.log(mint)
+            } else {
+                console.log('Not enabled yet.')
+            }
             process.exit();
         } catch (e) {
             console.log(e.message)
