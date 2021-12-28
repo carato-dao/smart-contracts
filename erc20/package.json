@@ -1,7 +1,7 @@
 {
-    "name": "umi-erc-20",
+    "name": "carato-erc-20",
     "version": "1.0.6",
-    "description": "UMi ERC-721 Base Contract",
+    "description": "Carato ERC-20 Smart Contract",
     "main": "index.js",
     "scripts": {
         "extract-abi": "truffle-export-abi -d ./build/contracts/ -o ./abi.json -v",
