@@ -14,10 +14,11 @@ async function main() {
             configs.provider
         );
         const web3Instance = new web3(provider);
-
         const contract = new web3Instance.eth.Contract(
             ABI,
-            configs.contract_address, { gasLimit: "5000000" }
+            configs.contract_address, {
+                gasLimit: "5000000"
+            }
         );
 
         try {
@@ -25,7 +26,9 @@ async function main() {
             const enabled = await contract.methods.isMinter(configs.owner_address).call()
             if (enabled) {
                 console.log('Minting new tokens...')
-                const mint = await contract.methods.mint(configs.owner_address, 5000).send({ from: configs.owner_address })
+                const mint = await contract.methods.mint(configs.owner_address, 5000).send({
+                    from: configs.owner_address
+                })
                 console.log(mint)
             } else {
                 console.log('Not enabled yet.')

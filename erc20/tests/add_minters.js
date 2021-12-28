@@ -22,9 +22,12 @@ async function main() {
             console.log('Checking if ' + minters[k] + ' is enabled..')
             const before = await nftContract.methods.isMinter(minters[k]).call();
             if (!before) {
-                await nftContract.methods.addMinter(minters[k]).send({ from: configs.owner_address, gasPrice: "100000000000" })
+                await nftContract.methods.addMinter(minters[k]).send({
+                    from: configs.owner_address,
+                    gasPrice: "100000000000"
+                })
                 const after = await nftContract.methods.isMinter(minters[k]).call();
-                console.log(minters[k] + ' enabled to mint:', proxy)
+                console.log(minters[k] + ' enabled to mint:', after)
             } else {
                 console.log(minters[k] + ' enabled to mint yet')
             }
@@ -32,8 +35,12 @@ async function main() {
         console.log('Adding owner..')
         const before = await nftContract.methods.isMinter(configs.owner_address).call();
         if (!before) {
-            await nftContract.methods.addMinter(configs.owner_address).send({ from: configs.owner_address, gasPrice: "100000000000" })
-            const proxy = await nftContract.methods.isMinter(configs.owner_address).call();
+            await nftContract.methods.addMinter(configs.owner_address).send({
+                from: configs.owner_address,
+                gasPrice: "100000000000"
+            })
+            const after = await nftContract.methods.isMinter(configs.owner_address).call();
+            console.log('Owner enabled to mint:', after)
         } else {
             console.log('Owner is enabled yet.')
         }
