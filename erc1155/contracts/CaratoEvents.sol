@@ -6,7 +6,6 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 
 contract CaratoEvents is ERC1155, Ownable {
     
-    address proxyRegistryAddress;
     string metadata_uri;
     mapping(address => bool) private _minters;
     mapping(uint256 => uint256) public _eventValues;
@@ -15,10 +14,8 @@ contract CaratoEvents is ERC1155, Ownable {
     uint256 public _maxValue = 5;
     bool public _mintingAuthored = false;
     address public _daoAddress;
-    uint256 _deadlineDays = 7;
 
-    constructor(address _proxyRegistryAddress) ERC1155("https://api.carato.org/nfts/{id}.json") {
-        proxyRegistryAddress = _proxyRegistryAddress;
+    constructor() ERC1155("https://api.carato.org/nfts/{id}.json") {
         metadata_uri = "https://api.carato.org/nfts/{id}.json";
     }
 
@@ -29,10 +26,6 @@ contract CaratoEvents is ERC1155, Ownable {
 
     function setAuthored(bool state) public onlyOwner {
         _mintingAuthored = state;
-    }
-
-    function setDeadlineDays(uint256 newday) public onlyOwner {
-        _deadlineDays = newday;
     }
 
     function setDaoAddress(address newaddress) public onlyOwner {
@@ -60,9 +53,12 @@ contract CaratoEvents is ERC1155, Ownable {
         require(block.timestamp < start_timestamp, "CaratoEvents: Can't mint token in the past");
         require(value > 0, "CaratoEvents: Value must be at least 1");
         require(value <= _maxValue, "CaratoEvents: Value too high");
-        _eventValues[id] = value;
-        _startTimestamp[id] = start_timestamp;
-        _claimDeadline[id] = end_timestamp;
+        // Be sure that starting and ending timestamps can't be changed after issuance.
+        if(_eventValues[id] == 0) {
+            _eventValues[id] = value;
+            _startTimestamp[id] = start_timestamp;
+            _claimDeadline[id] = end_timestamp;
+        }
         _mint(account, id, amount, data);
     }
 
@@ -125,16 +121,4 @@ contract CaratoEvents is ERC1155, Ownable {
         require(1 < 0, "CaratoEvents: Batch transfers are disabled");
     }
 
-    /**
-   * Override isApprovedForAll to auto-approve OS's proxy contract
-   */
-    function isApprovedForAll(
-        address _owner,
-        address _operator
-    ) public override virtual view returns (bool isOperator) {
-       if (_operator == address(proxyRegistryAddress)) {
-            return true;
-        }
-        return ERC1155.isApprovedForAll(_owner, _operator);
-    }
 }
