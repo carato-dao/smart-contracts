@@ -24,8 +24,8 @@ contract CaratoVesting is Ownable {
         require(value > 0, "CaratoVesting: Event doesn't exists");
         require(_tokensClaimed[_id_event][msg.sender] == false, "CaratoVesting: You already claimed your tokens");
         require(Carato1155.balanceOf(msg.sender, _id_event) > 0, "CaratoVesting: You must own the 1155 token");
-        Carato20.mint(msg.sender, value);
         _tokensClaimed[_id_event][msg.sender] = true;
+        Carato20.mint(msg.sender, value);
         emit Claimed(msg.sender, _id_event, value);
     }
 }
